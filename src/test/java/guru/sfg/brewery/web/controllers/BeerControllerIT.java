@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 public class BeerControllerIT extends BaseIT {
 
-    @WithMockUser("spring")
     @Test
     public void findBeers() throws Exception {
         mockMvc.perform(get("/beers/find"))
