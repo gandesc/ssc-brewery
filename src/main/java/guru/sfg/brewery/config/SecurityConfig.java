@@ -8,15 +8,17 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests(context -> {
-            context.antMatchers("/", "/resources/**", "/webjars/**").permitAll();
+        http.authorizeRequests(authrorize -> {
+            authrorize.antMatchers("/", "/resources/**", "/webjars/**").permitAll();
                 })
                 .authorizeRequests()
-                .anyRequest()
-                .authenticated()
-                .and().formLogin()
-                .and().httpBasic();
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .and()
+                .httpBasic();
     }
 }
