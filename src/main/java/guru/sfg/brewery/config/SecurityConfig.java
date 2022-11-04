@@ -7,35 +7,32 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
-    protected PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests(authorize -> {
-            authorize.antMatchers("/", "/resources/**", "/webjars/**").permitAll()
-                    .antMatchers("/beers/find", "/beers*").permitAll()
-                    .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
-                    .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
+        http
+                .authorizeRequests(authorize -> {
+                    authorize.antMatchers("/", "/resources/**", "/webjars/**").permitAll()
+                            .antMatchers("/beers/find", "/beers*").permitAll()
+                            .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
+                            .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
                 })
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().and()
                 .httpBasic();
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new StandardPasswordEncoder();
     }
 
     @Override
@@ -46,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
-                .password("password")
+                .password("b0c66852716b232d140f2c7726cb5329870aebe1c2251bca3aef79104be073d2e4a62f967f0fbc98")
                 .roles("USER");
 
         auth.inMemoryAuthentication().withUser("scott").password("tiger").roles("CUSTOMER");
