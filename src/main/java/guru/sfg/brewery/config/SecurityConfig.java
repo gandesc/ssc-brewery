@@ -10,25 +10,31 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Bean
+    protected PasswordEncoder passwordEncoder() {
+        return NoOpPasswordEncoder.getInstance();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests(authorize -> {
             authorize.antMatchers("/", "/resources/**", "/webjars/**").permitAll()
-                    .antMatchers("/beers/*", "/beers*").permitAll()
+                    .antMatchers("/beers/find", "/beers*").permitAll()
                     .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
                     .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
                 })
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .and()
+                .formLogin().and()
                 .httpBasic();
     }
 
@@ -36,16 +42,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser("spring")
-                .password("{noop}guru")
+                .password("guru")
                 .roles("ADMIN")
                 .and()
                 .withUser("user")
-                .password("{noop}password")
-                .roles("USER")
-                .and()
-                .withUser("scott")
-                .password("{noop}tiger")
-                .roles("CUSTOMER");
+                .password("password")
+                .roles("USER");
+
+        auth.inMemoryAuthentication().withUser("scott").password("tiger").roles("CUSTOMER");
     }
 
     //    @Override
