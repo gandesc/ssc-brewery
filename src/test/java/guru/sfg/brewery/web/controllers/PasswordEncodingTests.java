@@ -36,6 +36,7 @@ public class PasswordEncodingTests {
         PasswordEncoder ldap = new LdapShaPasswordEncoder();
         System.out.println(ldap.encode(PASSWORD));
         System.out.println(ldap.encode(PASSWORD));
+        System.out.println(ldap.encode("tiger"));
 
         String encodedPwd = ldap.encode(PASSWORD);
 
