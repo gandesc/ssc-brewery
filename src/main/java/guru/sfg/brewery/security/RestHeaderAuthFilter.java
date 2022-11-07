@@ -1,6 +1,7 @@
 package guru.sfg.brewery.security;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
@@ -36,18 +37,27 @@ public class RestHeaderAuthFilter extends AbstractAuthenticationProcessingFilter
         }
 
         try {
+            Authentication authResult = attemptAuthentication(request, response);
 
+            if (authResult != null) {
+                successfulAuthentication(request, response, chain, authResult);
+            } else {
+                chain.doFilter(request, response);
+            }
         } catch (AuthenticationException e) {
             unsuccessfulAuthentication(request, response, e);
         }
+    }
 
-        Authentication authResult = attemptAuthentication(request, response);
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        SecurityContextHolder.clearContext();
 
-        if (authResult != null) {
-            successfulAuthentication(request, response, chain, authResult);
-        } else {
-            chain.doFilter(request, response);
+        if (this.logger.isDebugEnabled()) {
+            this.logger.debug("Authentication request failed: " + failed.toString(), failed);
+            this.logger.debug("Updated SecurityContextHolder to contain null Authentication");
         }
+
+        response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
     }
 
     @Override
