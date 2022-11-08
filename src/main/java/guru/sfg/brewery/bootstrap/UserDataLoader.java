@@ -28,22 +28,13 @@ public class UserDataLoader implements CommandLineRunner {
     }
 
     private void loadSecurityData() {
-        Authority admin = Authority.builder()
-                .role("ADMIN")
-                .build();
-
+        Authority admin = Authority.builder().role("ROLE_ADMIN").build();
         authorityRepository.save(admin);
 
-        Authority user = Authority.builder()
-                .role("USER")
-                .build();
-
+        Authority user = Authority.builder().role("ROLE_USER").build();
         authorityRepository.save(user);
 
-        Authority customer = Authority.builder()
-                .role("CUSTOMER")
-                .build();
-
+        Authority customer = Authority.builder().role("ROLE_CUSTOMER").build();
         authorityRepository.save(customer);
 
         User adminUser = User.builder()
