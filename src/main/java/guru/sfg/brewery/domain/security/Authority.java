@@ -14,11 +14,11 @@ import java.util.Set;
 public class Authority {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     private String role;
 
     @ManyToMany(mappedBy = "authorities")
-    Set<User> users;
+    private Set<User> users;
 }

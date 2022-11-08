@@ -31,10 +31,10 @@ public class JpaUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 model.getUsername(),
                 model.getPassword(),
-                model.isEnabled(),
-                model.isAccountNonExpired(),
-                model.isCredentialsNonExpired(),
-                model.isAccountNonLocked(),
+                model.getEnabled(),
+                model.getAccountNonExpired(),
+                model.getCredentialsNonExpired(),
+                model.getAccountNonLocked(),
                 convertToSpringAuthorities(model.getAuthorities()));
     }
 
@@ -45,7 +45,7 @@ public class JpaUserDetailsService implements UserDetailsService {
             return authorities.stream()
                     .map(Authority::getRole)
                     .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
     }
 }

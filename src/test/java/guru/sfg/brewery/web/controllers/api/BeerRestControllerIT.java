@@ -3,34 +3,15 @@ package guru.sfg.brewery.web.controllers.api;
 import guru.sfg.brewery.web.controllers.BaseIT;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@SpringBootTest
 public class BeerRestControllerIT extends BaseIT {
-    @Test
-    public void deleteBeerUrlParamAuth() throws Exception {
-        mockMvc.perform(delete("/api/v1/beer/123e4567-e89b-12d3-a456-426614174000")
-                        .param("apiKey", "spring").param("apiSecret", "guru"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void deleteBeerBadCredentials() throws Exception {
-        mockMvc.perform(delete("/api/v1/beer/123e4567-e89b-12d3-a456-426614174000")
-                        .param("apiKey", "spring").param("apiSecret", "guru2"))
-                .andExpect(status().isUnauthorized());
-    }
-    @Test
-    public void deleteBeerHeaderAuth() throws Exception {
-        mockMvc.perform(delete("/api/v1/beer/123e4567-e89b-12d3-a456-426614174000")
-                        .header("Api-Key", "spring").header("Api-Secret", "guru"))
-                .andExpect(status().isOk());
-    }
-
     @Test
     public void deleteBeerHttpBasic() throws Exception {
         mockMvc.perform(delete("/api/v1/beer/123e4567-e89b-12d3-a456-426614174000")
