@@ -22,7 +22,7 @@ public class User {
     private String username;
 
     @Singular
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinTable(name="user_authority",
         joinColumns = {@JoinColumn(name="USER_ID", referencedColumnName = "ID")},
         inverseJoinColumns = {@JoinColumn(name="AUTHORITY_ID", referencedColumnName = "ID")})
