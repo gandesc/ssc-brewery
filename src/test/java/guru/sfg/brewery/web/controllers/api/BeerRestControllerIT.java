@@ -12,6 +12,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 public class BeerRestControllerIT extends BaseIT {
+
+    @Test
+    public void getBreweriesHttpBasicCustomerRole() throws Exception{
+        mockMvc.perform(get("/api/v1/breweries")
+                .with(httpBasic("scott", "tiger")))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getBreweriesHttpBasicUserCustomerRole() throws Exception{
+        mockMvc.perform(get("/api/v1/breweries")
+                .with(httpBasic("user", "password")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void getBreweriesUnauthenticated() throws Exception{
+        mockMvc.perform(get("/api/v1/breweries"))
+                .andExpect(status().isUnauthorized());
+    }
+
     @Test
     public void deleteBeerHttpBasic() throws Exception {
         mockMvc.perform(delete("/api/v1/beer/123e4567-e89b-12d3-a456-426614174000")
