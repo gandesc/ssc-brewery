@@ -33,7 +33,7 @@ public class BeerRestControllerIT extends BaseIT {
                     .beerName("Delete Me")
                     .beerStyle(BeerStyleEnum.IPA)
                     .minOnHand(12)
-                    .quantityToBrew(280)
+                    .quantityToBrew(200)
                     .upc(String.valueOf(rand.nextInt(99999999)))
                     .build());
         }
@@ -60,8 +60,8 @@ public class BeerRestControllerIT extends BaseIT {
         }
 
         @Test
-        public void deleteBeerNoAuth() throws Exception {
-            mockMvc.perform(delete("/api/v1/beer/123e4567-e89b-12d3-a456-426614174000"))
+        void deleteBeerNoAuth() throws Exception {
+            mockMvc.perform(delete("/api/v1/beer/" + beerToDelete().getId()))
                     .andExpect(status().isUnauthorized());
         }
     }
@@ -74,9 +74,9 @@ public class BeerRestControllerIT extends BaseIT {
 
     @Test
     public void findBeerById() throws Exception {
-        Beer beerToDelete = beerRepository.findAll().get(0);
+        Beer beer = beerRepository.findAll().get(0);
 
-        mockMvc.perform(get("/api/v1/beer/" + beerToDelete.getId()))
+        mockMvc.perform(get("/api/v1/beer/" + beer.getId()))
                 .andExpect(status().isOk());
     }
 
@@ -87,7 +87,7 @@ public class BeerRestControllerIT extends BaseIT {
     }
 
     @Test
-    public void findBeerFormAdmin() throws Exception {
+    public void findBeerFormADMIN() throws Exception {
         mockMvc.perform(get("/beers").param("beerName", "")
                         .with(httpBasic("spring", "guru")))
                 .andExpect(status().isOk());

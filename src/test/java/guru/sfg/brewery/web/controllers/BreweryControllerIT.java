@@ -11,41 +11,55 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BreweryControllerIT extends BaseIT {
 
     @Test
-    public void listBreweriesHttpBasicCUSTOMER() throws Exception{
+    public void listBreweriesCUSTOMER() throws Exception {
         mockMvc.perform(get("/brewery/breweries")
                         .with(httpBasic("scott", "tiger")))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void listBreweriesHttpBasicUSER() throws Exception{
+    void listBreweriesADMIN() throws Exception {
+        mockMvc.perform(get("/brewery/breweries")
+                        .with(httpBasic("spring", "guru")))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void listBreweriesUSER() throws Exception {
         mockMvc.perform(get("/brewery/breweries")
                         .with(httpBasic("user", "password")))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    public void listBreweriesNOAUTH() throws Exception{
+    public void listBreweriesNOAUTH() throws Exception {
         mockMvc.perform(get("/brewery/breweries"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void getBreweriesHttpBasicCUSTOMER() throws Exception{
+    public void getBreweriesJsonCUSTOMER() throws Exception {
         mockMvc.perform(get("/api/v1/breweries")
                         .with(httpBasic("scott", "tiger")))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void getBreweriesHttpBasicUSER() throws Exception{
+    void getBreweriesJsonADMIN() throws Exception {
+        mockMvc.perform(get("/api/v1/breweries")
+                        .with(httpBasic("spring", "guru")))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void getBreweriesJsonUSER() throws Exception {
         mockMvc.perform(get("/api/v1/breweries")
                         .with(httpBasic("user", "password")))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    public void getBreweriesNOAUTH() throws Exception{
+    public void getBreweriesJsonNOAUTH() throws Exception {
         mockMvc.perform(get("/api/v1/breweries"))
                 .andExpect(status().isUnauthorized());
     }
