@@ -22,9 +22,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                             .antMatchers("/", "/resources/**", "/webjars/**").permitAll()
                             .antMatchers("/beers/find", "/beers*").permitAll()
                             .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
-                            .antMatchers(HttpMethod.GET, "/api/v1/breweries", "/brewery/**").hasAnyRole("ADMIN", "CUSTOMER")
                             .antMatchers(HttpMethod.DELETE, "/api/v1/beer/*").hasRole("ADMIN")
-                            .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll();
+                            .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll()
+                            .antMatchers(HttpMethod.GET, "/api/v1/breweries", "/brewery/**")
+                                .hasAnyRole("ADMIN", "CUSTOMER");
                 })
                 .authorizeRequests()
                 .anyRequest().authenticated()
