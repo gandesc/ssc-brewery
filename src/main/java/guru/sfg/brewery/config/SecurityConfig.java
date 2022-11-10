@@ -21,10 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests(authorize -> {
                     authorize.antMatchers("/h2-console/**").permitAll() //not for production
-                            .antMatchers("/", "/resources/**", "/webjars/**").permitAll()
-                            .antMatchers("/beers/find").hasAnyRole("ADMIN", "CUSTOMER", "USER")
-                            .antMatchers(HttpMethod.GET, "/api/v1/breweries", "/brewery/**")
-                                .hasAnyRole("ADMIN", "CUSTOMER");
+                            .antMatchers("/", "/resources/**", "/webjars/**").permitAll();
                 })
                 .authorizeRequests()
                 .anyRequest().authenticated()
