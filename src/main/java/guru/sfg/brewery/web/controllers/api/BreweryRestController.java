@@ -1,6 +1,7 @@
 package guru.sfg.brewery.web.controllers.api;
 
 import guru.sfg.brewery.domain.Brewery;
+import guru.sfg.brewery.security.perms.BreweryReadPermission;
 import guru.sfg.brewery.services.BreweryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +17,7 @@ public class BreweryRestController {
 
     private final BreweryService breweryService;
 
-    @PreAuthorize("hasAuthority('brewery.read')")
+    @BreweryReadPermission
     @GetMapping("/api/v1/breweries")
     public @ResponseBody
     List<Brewery> getBreweriesJson(){
