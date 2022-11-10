@@ -27,7 +27,8 @@ public class BeerRestControllerIT extends BaseIT {
 
     @DisplayName("Delete Tests")
     @Nested
-    public class DeleteTests {
+    class DeleteTests {
+
         public Beer beerToDelete() {
             Random rand = new Random();
 

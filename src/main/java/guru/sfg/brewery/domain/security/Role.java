@@ -5,14 +5,13 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Set;
 
-@Getter
 @Setter
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
 public class Role {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;

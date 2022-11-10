@@ -3,7 +3,6 @@ package guru.sfg.brewery.config;
 import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,7 +17,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
                 .authorizeRequests(authorize -> {
                     authorize.antMatchers("/h2-console/**").permitAll() //not for production
                             .antMatchers("/", "/resources/**", "/webjars/**").permitAll();
@@ -27,7 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().and()
-                .httpBasic();
+                .httpBasic()
+                .and().csrf().disable();
 
         http.headers().frameOptions().sameOrigin(); //for h2 frames
     }
