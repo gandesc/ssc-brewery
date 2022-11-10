@@ -10,8 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ public class UserDataLoader implements CommandLineRunner {
 
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     @Override
     public void run(String[] args) {
         if (authorityRepository.count() > 0 || userRepository.count() > 0) {
@@ -42,42 +45,53 @@ public class UserDataLoader implements CommandLineRunner {
         Authority updateBeer = authorityRepository.save(Authority.builder().permission("beer.update").build());
         Authority deleteBeer = authorityRepository.save(Authority.builder().permission("beer.delete").build());
 
-        Role adminRole = Role.builder().name("ADMIN")
-                .authorities(Set.of(createBeer, readBeer, updateBeer, deleteBeer))
-                .build();
+        //customer auths
+        Authority createCustomer = authorityRepository.save(Authority.builder().permission("customer.create").build());
+        Authority readCustomer = authorityRepository.save(Authority.builder().permission("customer.read").build());
+        Authority updateCustomer = authorityRepository.save(Authority.builder().permission("customer.update").build());
+        Authority deleteCustomer = authorityRepository.save(Authority.builder().permission("customer.delete").build());
 
-        Role customerRole = Role.builder().name("CUSTOMER")
-                .authorities(Set.of(readBeer))
-                .build();
+        //customer brewery
+        Authority createBrewery = authorityRepository.save(Authority.builder().permission("brewery.create").build());
+        Authority readBrewery = authorityRepository.save(Authority.builder().permission("brewery.read").build());
+        Authority updateBrewery = authorityRepository.save(Authority.builder().permission("brewery.update").build());
+        Authority deleteBrewery = authorityRepository.save(Authority.builder().permission("brewery.delete").build());
 
-        Role userRole = Role.builder().name("USER")
-                .authorities(Set.of(readBeer))
-                .build();
+
+        Role adminRole = roleRepository.save(Role.builder().name("ADMIN").build());
+        Role customerRole = roleRepository.save(Role.builder().name("CUSTOMER").build());
+        Role userRole = roleRepository.save(Role.builder().name("USER").build());
+
+        adminRole.setAuthorities(new HashSet<>(Set.of(
+                createBeer, readBeer, updateBeer, deleteBeer,
+                createBrewery, readBrewery, updateBrewery, deleteBrewery,
+                createCustomer, readCustomer, updateCustomer, deleteCustomer
+        )));
+
+        customerRole.setAuthorities(new HashSet<>(Set.of(readBeer, readCustomer, readBrewery)));
+
+        userRole.setAuthorities(new HashSet<>(Set.of(readBeer)));
 
         roleRepository.saveAll(Arrays.asList(adminRole, customerRole, userRole));
 
-        User adminUser = User.builder()
+        userRepository.save(User.builder()
                 .username("spring")
                 .password(passwordEncoder.encode("guru"))
                 .role(adminRole)
-                .build();
+                .build());
 
-        userRepository.save(adminUser);
 
-        User simpleUser = User.builder()
+        userRepository.save(User.builder()
                 .username("user")
                 .password(passwordEncoder.encode("password"))
                 .role(userRole)
-                .build();
+                .build());
 
-        userRepository.save(simpleUser);
 
-        User scottUser = User.builder()
+        userRepository.save(User.builder()
                 .username("scott")
                 .password(passwordEncoder.encode("tiger"))
                 .role(customerRole)
-                .build();
-
-        userRepository.save(scottUser);
+                .build());
     }
 }

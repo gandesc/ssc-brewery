@@ -48,7 +48,7 @@ public class JpaUserDetailsService implements UserDetailsService {
             return new HashSet<>();
         } else {
             return authorities.stream()
-                    .map(Authority::getRole)
+                    .map(Authority::getPermission)
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toSet());
         }
