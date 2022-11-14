@@ -11,9 +11,7 @@ import guru.sfg.brewery.web.controllers.BaseIT;
 import guru.sfg.brewery.web.model.BeerOrderDto;
 import guru.sfg.brewery.web.model.BeerOrderLineDto;
 import guru.sfg.brewery.web.model.OrderStatusEnum;
-import org.apiguardian.api.API;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,9 +26,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-public class BeerOrderControllerTest extends BaseIT {
+public class BeerOrderControllerV2Test extends BaseIT {
 
-    private static final String API_ROOT = "/api/v1/customers/";
+    private static final String API_ROOT = "/api/v2/orders/";
 
     @Autowired
     CustomerRepository customerRepository;
@@ -68,7 +66,7 @@ public class BeerOrderControllerTest extends BaseIT {
     void createOrderNoAuth() throws Exception {
         BeerOrderDto beerOrderDto = buildOrderDto(stPeteCustomer, loadedBeers.get(0).getId());
 
-        mockMvc.perform(post(API_ROOT + stPeteCustomer.getId() + "/orders")
+        mockMvc.perform(post(API_ROOT + stPeteCustomer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -81,7 +79,7 @@ public class BeerOrderControllerTest extends BaseIT {
     void createOrderUserAdmin() throws Exception {
         BeerOrderDto beerOrderDto = buildOrderDto(stPeteCustomer, loadedBeers.get(0).getId());
 
-        mockMvc.perform(post(API_ROOT + stPeteCustomer.getId() + "/orders")
+        mockMvc.perform(post(API_ROOT + stPeteCustomer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -94,7 +92,7 @@ public class BeerOrderControllerTest extends BaseIT {
     void createOrderUserAuthCustomer() throws Exception {
         BeerOrderDto beerOrderDto = buildOrderDto(stPeteCustomer, loadedBeers.get(0).getId());
 
-        mockMvc.perform(post(API_ROOT + stPeteCustomer.getId() + "/orders")
+        mockMvc.perform(post(API_ROOT + stPeteCustomer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -107,7 +105,7 @@ public class BeerOrderControllerTest extends BaseIT {
     void createOrderUserNOTAuthCustomer() throws Exception {
         BeerOrderDto beerOrderDto = buildOrderDto(stPeteCustomer, loadedBeers.get(0).getId());
 
-        mockMvc.perform(post(API_ROOT + stPeteCustomer.getId() + "/orders")
+        mockMvc.perform(post(API_ROOT + stPeteCustomer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -117,34 +115,34 @@ public class BeerOrderControllerTest extends BaseIT {
 
     @Test
     void listOrderNotAuth() throws Exception {
-        mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders"))
+        mockMvc.perform(get(API_ROOT))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithUserDetails("spring")
     void listOrdersAdminAuth() throws Exception {
-        mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders"))
+        mockMvc.perform(get(API_ROOT))
                 .andExpect(status().isOk());
     }
 
     @Test
     @WithUserDetails(DefaultBreweryLoader.STPETE_USER)
     void listOrdersCustomerAuth() throws Exception {
-        mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders"))
+        mockMvc.perform(get(API_ROOT))
                 .andExpect(status().isOk());
     }
 
     @Test
     @WithUserDetails(DefaultBreweryLoader.DUNEDIN_USER)
     void listOrdersCustomerNOTAuth() throws Exception {
-        mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders"))
-                .andExpect(status().isForbidden());
+        mockMvc.perform(get(API_ROOT))
+                .andExpect(status().isOk());
     }
 
     @Test
     void listOrdersNoAuth() throws Exception {
-        mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders"))
+        mockMvc.perform(get(API_ROOT))
                 .andExpect(status().isUnauthorized());
     }
 

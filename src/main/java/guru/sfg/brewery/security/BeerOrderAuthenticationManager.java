@@ -12,12 +12,11 @@ import java.util.UUID;
 public class BeerOrderAuthenticationManager {
 
     public boolean customerIdMatches(Authentication authentication, UUID customerId) {
-
         User authenticatedUser = (User) authentication.getPrincipal();
 
-        log.debug("Authenticated user customer id: " + authenticatedUser.getCustomer().getId()
-                + " customer id: " + customerId);
+        log.debug("Auth User Customer Id: " + authenticatedUser.getCustomer().getId() + " Customer Id:" + customerId);
 
         return authenticatedUser.getCustomer().getId().equals(customerId);
     }
+
 }

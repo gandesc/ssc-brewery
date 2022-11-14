@@ -1,34 +1,36 @@
 package guru.sfg.brewery.web.controllers.api;
 
+import guru.sfg.brewery.domain.security.User;
+import guru.sfg.brewery.security.perms.BeerOrderReadPermissionV2;
 import guru.sfg.brewery.security.perms.BeerOrderCreatePermission;
 import guru.sfg.brewery.security.perms.BeerOrderPickupPermission;
-import guru.sfg.brewery.security.perms.BeerOrderReadPermission;
 import guru.sfg.brewery.services.BeerOrderService;
 import guru.sfg.brewery.web.model.BeerOrderDto;
 import guru.sfg.brewery.web.model.BeerOrderPagedList;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-@RequestMapping("/api/v1/customers/{customerId}/")
+@RequestMapping("/api/v2/orders/")
 @RestController
-public class BeerOrderController {
+public class BeerOrderControllerV2 {
 
     private static final Integer DEFAULT_PAGE_NUMBER = 0;
-    private static final Integer DEFAULT_PAGE_SIZE = 25;
+    private static final Integer DEFAULT_PAGE_SIZE = 10;
 
     private final BeerOrderService beerOrderService;
 
-    public BeerOrderController(BeerOrderService beerOrderService) {
+    public BeerOrderControllerV2(BeerOrderService beerOrderService) {
         this.beerOrderService = beerOrderService;
     }
 
-    @GetMapping("orders")
-    @BeerOrderReadPermission
+    @GetMapping
+    @BeerOrderReadPermissionV2
     public BeerOrderPagedList listOrders(
-            @PathVariable("customerId") UUID customerId,
+            @AuthenticationPrincipal User user,
             @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @RequestParam(value = "pageSize", required = false) Integer pageSize
     ) {
@@ -40,10 +42,14 @@ public class BeerOrderController {
             pageSize = DEFAULT_PAGE_SIZE;
         }
 
-        return beerOrderService.listOrders(customerId, PageRequest.of(pageNumber, pageSize));
+        if (user.getCustomer() != null) {
+            return beerOrderService.listOrders(user.getCustomer().getId(), PageRequest.of(pageNumber, pageSize));
+        } else {
+            return beerOrderService.listOrders(PageRequest.of(pageNumber, pageSize));
+        }
     }
 
-    @PostMapping("orders")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @BeerOrderCreatePermission
     public BeerOrderDto placeOrder(
@@ -53,8 +59,8 @@ public class BeerOrderController {
         return beerOrderService.placeOrder(customerId, beerOrderDto);
     }
 
-    @GetMapping("orders/{orderId}")
-    @BeerOrderReadPermission
+    @GetMapping("{orderId}")
+    @BeerOrderReadPermissionV2
     public BeerOrderDto getOrder(
             @PathVariable("customerId") UUID customerId,
             @PathVariable("orderId") UUID orderId
@@ -62,7 +68,7 @@ public class BeerOrderController {
         return beerOrderService.getOrderById(customerId, orderId);
     }
 
-    @PutMapping("orders/{orderId}/pickup")
+    @PutMapping("{orderId}/pickup")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @BeerOrderPickupPermission
     public void pickupOrder(
