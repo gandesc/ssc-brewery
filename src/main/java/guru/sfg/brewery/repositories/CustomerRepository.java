@@ -30,5 +30,5 @@ import java.util.UUID;
 public interface CustomerRepository extends JpaRepository<Customer, UUID> {
     List<Customer> findAllByCustomerNameLike(String customerName);
 
-    Optional<Role> findByCustomerName(String customerName);
+    Optional<Customer> findByCustomerName(String customerName);
 }
