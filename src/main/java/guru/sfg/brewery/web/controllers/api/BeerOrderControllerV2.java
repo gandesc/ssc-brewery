@@ -7,28 +7,30 @@ import guru.sfg.brewery.security.perms.BeerOrderPickupPermission;
 import guru.sfg.brewery.services.BeerOrderService;
 import guru.sfg.brewery.web.model.BeerOrderDto;
 import guru.sfg.brewery.web.model.BeerOrderPagedList;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
+@Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/api/v2/orders/")
 @RestController
 public class BeerOrderControllerV2 {
 
     private static final Integer DEFAULT_PAGE_NUMBER = 0;
-    private static final Integer DEFAULT_PAGE_SIZE = 10;
+    private static final Integer DEFAULT_PAGE_SIZE = 25;
 
     private final BeerOrderService beerOrderService;
 
-    public BeerOrderControllerV2(BeerOrderService beerOrderService) {
-        this.beerOrderService = beerOrderService;
-    }
-
-    @GetMapping
     @BeerOrderReadPermissionV2
+    @GetMapping
     public BeerOrderPagedList listOrders(
             @AuthenticationPrincipal User user,
             @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
@@ -49,32 +51,17 @@ public class BeerOrderControllerV2 {
         }
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @BeerOrderCreatePermission
-    public BeerOrderDto placeOrder(
-            @PathVariable("customerId") UUID customerId,
-            @RequestBody BeerOrderDto beerOrderDto
-    ) {
-        return beerOrderService.placeOrder(customerId, beerOrderDto);
-    }
-
-    @GetMapping("{orderId}")
     @BeerOrderReadPermissionV2
-    public BeerOrderDto getOrder(
-            @PathVariable("customerId") UUID customerId,
-            @PathVariable("orderId") UUID orderId
-    ) {
-        return beerOrderService.getOrderById(customerId, orderId);
-    }
+    @GetMapping("{orderId}")
+    public BeerOrderDto getOrder(@PathVariable("orderId") UUID orderId) {
+        BeerOrderDto beerOrderDto = beerOrderService.getOrderById(orderId);
 
-    @PutMapping("{orderId}/pickup")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @BeerOrderPickupPermission
-    public void pickupOrder(
-            @PathVariable("customerId") UUID customerId,
-            @PathVariable("orderId") UUID orderId
-    ) {
-        beerOrderService.pickupOrder(customerId, orderId);
+        if (beerOrderDto == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order Not Found");
+        }
+
+        log.debug("Found Order: " + beerOrderDto);
+
+        return beerOrderDto;
     }
 }

@@ -65,7 +65,7 @@ public class BeerOrderControllerTest extends BaseIT {
     }
 
     @Test
-    void createOrderNoAuth() throws Exception {
+    void createOrderNotAuth() throws Exception {
         BeerOrderDto beerOrderDto = buildOrderDto(stPeteCustomer, loadedBeers.get(0).getId());
 
         mockMvc.perform(post(API_ROOT + stPeteCustomer.getId() + "/orders")
@@ -116,7 +116,7 @@ public class BeerOrderControllerTest extends BaseIT {
     }
 
     @Test
-    void listOrderNotAuth() throws Exception {
+    void listOrdersNotAuth() throws Exception {
         mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders"))
                 .andExpect(status().isUnauthorized());
     }
@@ -145,6 +145,15 @@ public class BeerOrderControllerTest extends BaseIT {
     @Test
     void listOrdersNoAuth() throws Exception {
         mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Transactional
+    @Test
+    void getByOrderIdNotAuth() throws Exception {
+        BeerOrder beerOrder = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
+
+        mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders/" + beerOrder.getId()))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -180,15 +189,6 @@ public class BeerOrderControllerTest extends BaseIT {
 
     @Transactional
     @Test
-    void getByOrderIdNotAuth() throws Exception {
-        BeerOrder beerOrder = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
-
-        mockMvc.perform(get(API_ROOT + stPeteCustomer.getId() + "/orders/" + beerOrder.getId()))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Transactional
-    @Test
     void pickUpOrderNotAuth() throws Exception {
         BeerOrder beerOrder = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
 
@@ -199,7 +199,7 @@ public class BeerOrderControllerTest extends BaseIT {
     @Transactional
     @Test
     @WithUserDetails("spring")
-    void pickupOrderAdminUser() throws Exception {
+    void pickUpOrderAdminUser() throws Exception {
         BeerOrder beerOrder = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
 
         mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/orders/" + beerOrder.getId() + "/pickup"))
@@ -209,10 +209,10 @@ public class BeerOrderControllerTest extends BaseIT {
     @Transactional
     @Test
     @WithUserDetails(DefaultBreweryLoader.STPETE_USER)
-    void pickupOrderCustomerUserAuth() throws Exception {
+    void pickUpOrderCustomerUserAUTH() throws Exception {
         BeerOrder beerOrder = stPeteCustomer.getBeerOrders().stream().findFirst().orElseThrow();
 
-        mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/orders/"  + beerOrder.getId() + "/pickup"))
+        mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/orders/" + beerOrder.getId() + "/pickup"))
                 .andExpect(status().isNoContent());
     }
 
@@ -229,8 +229,8 @@ public class BeerOrderControllerTest extends BaseIT {
     private BeerOrderDto buildOrderDto(Customer customer, UUID beerId) {
         BeerOrderLineDto lineDto = BeerOrderLineDto.builder()
                 .id(UUID.randomUUID())
-                .orderQuantity(2)
                 .beerId(beerId)
+                .orderQuantity(5)
                 .build();
 
         return BeerOrderDto.builder()
