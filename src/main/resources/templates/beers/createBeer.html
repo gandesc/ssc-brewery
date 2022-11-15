@@ -9,7 +9,7 @@
 </h2>
 <form th:object="${beer}" class="form-horizontal" id="add-beer-form" method="post">
     <div class="form-group has-feedback">
-
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
         <input
                 th:replace="~{fragments/inputField :: input ('Beer Name', 'beerName', 'text')}" />
         <input
