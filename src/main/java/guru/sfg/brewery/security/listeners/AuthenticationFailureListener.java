@@ -2,6 +2,7 @@ package guru.sfg.brewery.security.listeners;
 
 import guru.sfg.brewery.domain.security.LoginFailure;
 import guru.sfg.brewery.repositories.security.LoginFailureRepository;
+import guru.sfg.brewery.repositories.security.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class AuthenticationFailureListener {
 
     private final LoginFailureRepository loginFailureRepository;
+    private final UserRepository userRepository;
 
     @EventListener
     public void listen(AuthenticationFailureBadCredentialsEvent event) {
@@ -26,6 +28,7 @@ public class AuthenticationFailureListener {
 
             LoginFailure.LoginFailureBuilder builder = LoginFailure.builder();
             builder.username(token.getPrincipal().toString());
+            userRepository.findByUsername((String) token.getPrincipal()).ifPresent(builder::user);
 
             log.debug("Attempted Username: " + token.getPrincipal());
 
