@@ -55,6 +55,14 @@ public class User implements UserDetails, CredentialsContainer {
     @Builder.Default
     private Boolean enabled = true;
 
+    @Builder.Default
+    private Boolean userGoogle2fa = false;
+
+    private String google2FaSecret;
+
+    @Transient
+    private Boolean google2faRequired;
+
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdDate;

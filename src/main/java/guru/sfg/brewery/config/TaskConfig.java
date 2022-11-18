@@ -22,7 +22,7 @@ public class TaskConfig {
 
     private final UserRepository userRepository;
 
-    @Scheduled(fixedRate = 5000) // in practice, longer
+    @Scheduled(fixedRate = 5000000) // in practice, longer
     public void unlockAccounts() {
         List<User> lockedUsers = userRepository
                 .findAllByAccountNonLockedAndLastModifiedDateIsBefore(
