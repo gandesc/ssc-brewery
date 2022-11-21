@@ -61,7 +61,7 @@ public class User implements UserDetails, CredentialsContainer {
     private String google2faSecret;
 
     @Transient
-    private Boolean google2faRequired;
+    private Boolean google2faRequired = true;
 
     @CreationTimestamp
     @Column(updatable = false)
