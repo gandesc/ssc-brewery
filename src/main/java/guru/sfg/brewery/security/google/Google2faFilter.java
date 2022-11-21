@@ -14,17 +14,21 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class Google2faFilter extends GenericFilterBean {
 
     private final AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
+    private final Google2faFailureHandler google2faFailureHandler = new Google2faFailureHandler();
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -37,7 +41,7 @@ public class Google2faFilter extends GenericFilterBean {
                 if (user.getUserGoogle2fa() && user.getGoogle2faRequired()) {
                     log.debug("2FA Required");
 
-                    // todo add failure handler
+                    google2faFailureHandler.onAuthenticationFailure(request, response, null);
                 }
             }
         }
