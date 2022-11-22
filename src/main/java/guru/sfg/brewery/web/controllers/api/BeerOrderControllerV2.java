@@ -2,8 +2,6 @@ package guru.sfg.brewery.web.controllers.api;
 
 import guru.sfg.brewery.domain.security.User;
 import guru.sfg.brewery.security.perms.BeerOrderReadPermissionV2;
-import guru.sfg.brewery.security.perms.BeerOrderCreatePermission;
-import guru.sfg.brewery.security.perms.BeerOrderPickupPermission;
 import guru.sfg.brewery.services.BeerOrderService;
 import guru.sfg.brewery.web.model.BeerOrderDto;
 import guru.sfg.brewery.web.model.BeerOrderPagedList;
@@ -13,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
