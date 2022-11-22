@@ -32,7 +32,7 @@ public class CorsIT extends BaseIT {
 
     @Test
     void postBeersPREFLIGHT() throws Exception {
-        mockMvc.perform(post("/api/v1/beer")
+        mockMvc.perform(options("/api/v1/beer")
                 .header("Origin", "https://springframework.guru")
                 .header("Access-Control-Request-Method", "POST"))
                 .andExpect(status().isOk())
@@ -41,7 +41,7 @@ public class CorsIT extends BaseIT {
 
     @Test
     void putBeersPREFLIGHT() throws Exception {
-        mockMvc.perform(put("/api/v1/beer")
+        mockMvc.perform(options("/api/v1/beer")
                 .header("Origin", "https://springframework.guru")
                 .header("Access-Control-Request-Method", "PUT"))
                 .andExpect(status().isOk())
@@ -50,7 +50,7 @@ public class CorsIT extends BaseIT {
 
     @Test
     void deleteBeersPREFLIFHT() throws Exception {
-        mockMvc.perform(delete("/api/v1/beer")
+        mockMvc.perform(options("/api/v1/beer")
                 .header("Origin", "https://springframework.guru")
                 .header("Access-Control-Request-Method", "DELETE"))
                 .andExpect(status().isOk())
