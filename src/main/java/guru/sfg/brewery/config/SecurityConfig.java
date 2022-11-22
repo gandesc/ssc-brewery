@@ -17,9 +17,9 @@ import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @RequiredArgsConstructor
-@Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@Configuration
+//@EnableWebSecurity
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
@@ -61,11 +61,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //.rememberMe().key("some-key").userDetailsService(userDetailsService);
 
         http.headers().frameOptions().sameOrigin(); //for h2 frames
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return SfgPasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
 //    @Override
